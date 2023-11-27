@@ -1,4 +1,5 @@
-Flutter package that makes text more readable.
+# Text Balancer
+Flutter widget that makes text more readable.<br>
 It works with fixed-width as well as variable-width fonts.
 
 ![line-balancer demo](https://github.com/nero-angela/flutter_text_balancer/assets/26322627/01980ef3-4554-4897-b67d-6f4f86b7fd2c)
