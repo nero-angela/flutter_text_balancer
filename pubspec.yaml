@@ -1,0 +1,28 @@
+name: text_balancer
+description: Flutter package that makes text more readable.
+version: 0.1.0
+homepage: https://github.com/nero-angela/flutter_text_balancer
+repository: https://github.com/nero-angela/flutter_text_balancer
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
