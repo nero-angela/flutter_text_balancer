@@ -1,5 +1,6 @@
 import 'package:example/widget/container_size_slider.dart';
 import 'package:example/widget/font_size_slider.dart';
+import 'package:example/widget/min_lines_slider.dart';
 import 'package:example/widget/section.dart';
 import 'package:example/widget/tile.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,9 @@ class _ExamplePageState extends State<ExamplePage> {
   String get text => isKorean
       ? "Flutter는 전체 앱 개발 프로세스를 변화시킵니다."
       : "Flutter transforms the entire app development process.";
-  final ValueNotifier<double> fontSizeNoti = ValueNotifier(0.5);
   final ValueNotifier<double> containerWidthNoti = ValueNotifier(1);
+  final ValueNotifier<double> fontSizeNoti = ValueNotifier(0.5);
+  final ValueNotifier<double> minLinesNoti = ValueNotifier(0);
 
   @override
   Widget build(BuildContext context) {
@@ -68,29 +70,37 @@ class _ExamplePageState extends State<ExamplePage> {
                       valueListenable: fontSizeNoti,
                       builder: (context, value, child) => DefaultTextStyle(
                         style: TextStyle(
-                          fontSize: 12 * (1 + value),
+                          fontSize: 12 * (1 + 3 * value),
                           color: Colors.black,
                         ),
                         child: child!,
                       ),
-                      child: Column(
-                        children: [
-                          /// [Text]
-                          Expanded(
-                            child: Section(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            /// [Text]
+                            Section(
                               title: 'Default',
                               child: Text(text),
                             ),
-                          ),
+                            const SizedBox(height: 32),
 
-                          /// [TextBalancer]
-                          Expanded(
-                            child: Section(
+                            /// [TextBalancer]
+                            Section(
                               title: 'Text Balancer',
-                              child: TextBalancer(text),
+                              child: ValueListenableBuilder(
+                                valueListenable: minLinesNoti,
+                                builder: (context, v, child) {
+                                  final minLines = (v * 3 + 1).toInt();
+                                  return TextBalancer(
+                                    text,
+                                    minLines: minLines,
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -98,12 +108,16 @@ class _ExamplePageState extends State<ExamplePage> {
               ),
               const SizedBox(height: 12),
 
+              /// Container Size Slider
+              ContainerSizeSlider(containerWidthNoti: containerWidthNoti),
+              const SizedBox(height: 12),
+
               /// Font Size Slider
               FontSizeSlider(fontSizeNoti: fontSizeNoti),
               const SizedBox(height: 12),
 
-              /// Container Size Slider
-              ContainerSizeSlider(containerWidthNoti: containerWidthNoti),
+              /// Min Lines Slider
+              MinLinesSlider(minLinesNoti: minLinesNoti),
             ],
           ),
         ),

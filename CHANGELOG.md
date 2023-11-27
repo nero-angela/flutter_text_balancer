@@ -1,3 +1,8 @@
+## 0.1.5
+
+* Change algorithms with dynamic programming
+* Add minLines property.
+
 ## 0.1.3
 
 * Update README.md

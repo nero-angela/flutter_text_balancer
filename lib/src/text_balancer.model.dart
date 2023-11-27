@@ -1,14 +1,17 @@
 part of '../text_balancer.dart';
 
+/// Proportional font divide algorithm
 String balanced(
   String text, {
   required TextStyle textStyle,
   required double maxWidth,
+  int? minLines,
 }) {
-  final result = _devideProportionalFont(
+  final result = _balancedByDp(
     text,
     textStyle,
     maxWidth,
+    minLines ?? 1,
   );
   return result.join('\n');
 }
@@ -21,91 +24,61 @@ double _getTextWidth(String text, TextStyle textStyle) {
   return textPainter.width;
 }
 
-/// Proportional font divide algorithm
-/// references : https://xxyxyz.org/line-breaking
-List<String> _devideProportionalFont(
-  String text,
-  TextStyle textStyle,
-  double maxWidth,
+/// Time complexity : n^2
+List<String> _balancedByDp(
+  final String text,
+  final TextStyle textStyle,
+  final double maxWidth,
+  final int minLines,
 ) {
-  final space = _getTextWidth(' ', textStyle);
-  final words = text.split(' ');
-  final wordWidthList = words.map((w) {
+  double width = maxWidth;
+  final double space = _getTextWidth(' ', textStyle);
+  final List<String> words = text.split(' ');
+  final List<double> wordWidthList = words.map((w) {
     return _getTextWidth(w, textStyle);
   }).toList();
   int count = words.length;
-  List<double> offsets = [0.0];
-  for (int i = 0; i < words.length; i++) {
-    offsets.add(offsets[offsets.length - 1] + wordWidthList[i]);
+  if (count <= minLines) {
+    return words;
+  }
+  final double textWidth = _getTextWidth(text, textStyle);
+  final int nLines = (textWidth / width).ceil();
+  if (nLines < minLines && minLines > 1) {
+    width = textWidth / (minLines - 0.99);
   }
 
-  List<double> minima = [0.0] + List<double>.filled(count, double.infinity);
-  List<int> breaks = List<int>.filled(count + 1, 0);
-
-  double cost(int i, int j) {
-    double w = offsets[j] - offsets[i] + (j - i - 1) * space;
-    if (w > maxWidth) {
-      return double.infinity;
+  List<List<double>> slack = List.generate(count, (i) => List.filled(count, 0));
+  for (int i = 0; i < count; i++) {
+    slack[i][i] = width - wordWidthList[i];
+    for (int j = i + 1; j < count; j++) {
+      slack[i][j] = slack[i][j - 1] - wordWidthList[j] - space;
     }
-    return minima[i] + pow((maxWidth - w), 2);
   }
 
-  void search(int i0, int j0, int i1, int j1) {
-    List<List<int>> stack = [
-      [i0, j0, i1, j1]
-    ];
-    while (stack.isNotEmpty) {
-      List<int> args = stack.removeLast();
-      i0 = args[0];
-      j0 = args[1];
-      i1 = args[2];
-      j1 = args[3];
-      if (j0 < j1) {
-        int j = (j0 + j1) ~/ 2;
-        for (int i = i0; i < i1; i++) {
-          double c = cost(i, j);
-          if (c <= minima[j]) {
-            minima[j] = c;
-            breaks[j] = i;
-          }
-        }
-        stack.add([breaks[j], j + 1, i1, j1]);
-        stack.add([i0, j0, breaks[j] + 1, j]);
+  List<double> minima = [0.0] + List.filled(count, double.infinity);
+  List<int> breaks = List.filled(count, 0);
+
+  for (int j = 0; j < count; j++) {
+    int i = j;
+    while (i >= 0) {
+      double cost = (slack[i][j] < 0)
+          ? double.infinity
+          : minima[i] + slack[i][j] * slack[i][j];
+      if (minima[j + 1] > cost) {
+        minima[j + 1] = cost;
+        breaks[j] = i;
       }
+      i -= 1;
     }
-  }
-
-  int n = count + 1;
-  int i = 0;
-  int offset = 0;
-  while (true) {
-    int r = min(n, pow(2, (i + 1)).toInt());
-    int edge = pow(2, i).toInt() + offset;
-
-    search(0 + offset, edge, edge, r + offset);
-    double x = minima[r - 1 + offset];
-    for (int j = pow(2, i).toInt(); j < r - 1; j++) {
-      double y = cost(j + offset, r - 1 + offset);
-      if (y <= x) {
-        n -= j;
-        i = 0;
-        offset += j;
-        break;
-      }
-    }
-    if (r == n) {
-      break;
-    }
-    i = i + 1;
   }
 
   List<String> lines = [];
   int j = count;
   while (j > 0) {
-    int i = breaks[j];
+    int i = breaks[j - 1];
     lines.add(words.sublist(i, j).join(' '));
     j = i;
   }
-  lines = List.from(lines.reversed);
+  lines = lines.reversed.toList();
   return lines;
 }

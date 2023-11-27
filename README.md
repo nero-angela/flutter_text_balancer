@@ -1,8 +1,7 @@
-# Text Balancer
-Flutter widget that makes text more readable.<br>
+Flutter package that makes text more readable.<br>
 It works with fixed-width as well as variable-width fonts.
 
-![line-balancer demo](https://github.com/nero-angela/flutter_text_balancer/assets/26322627/01980ef3-4554-4897-b67d-6f4f86b7fd2c)
+![text balancer](https://github.com/nero-angela/flutter_text_balancer/assets/26322627/d707b1c1-ac54-4460-bf6c-87cb4f09c1ca)
 
 ## How To Use
 ```dart
@@ -23,10 +22,9 @@ Text('text').balance(
 ```
 
 ## Performance
-![performance](https://github.com/nero-angela/flutter_text_balancer/assets/26322627/40f1972d-863c-4d79-824a-a897a804043f)
+![performance](https://github.com/nero-angela/flutter_text_balancer/assets/26322627/17262c38-75e7-469c-9a05-9b61be9248e7)
 
-- Time complexity : `O(n * log n)`
-- Modified the algorithm to work with variable-width fonts where each character has a different width.
+- Time complexity : `n^2`
 
 ## References
 - https://xxyxyz.org/line-breaking

@@ -18,6 +18,7 @@ class TextBalancer extends StatelessWidget {
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
+    this.minLines,
   });
 
   final String data;
@@ -36,6 +37,9 @@ class TextBalancer extends StatelessWidget {
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
 
+  /// TextBalancer properties
+  final int? minLines;
+
   @override
   Widget build(BuildContext context) {
     final textStyle = style ?? DefaultTextStyle.of(context).style;
@@ -45,6 +49,7 @@ class TextBalancer extends StatelessWidget {
           data,
           textStyle: textStyle,
           maxWidth: constraints.maxWidth,
+          minLines: minLines,
         ),
         style: textStyle,
         strutStyle: strutStyle,

@@ -4,8 +4,14 @@ extension TextBalancerStringExt on String {
   String balance({
     required TextStyle textStyle,
     required double maxWidth,
+    int? minLines,
   }) {
-    return balanced(this, textStyle: textStyle, maxWidth: maxWidth);
+    return balanced(
+      this,
+      textStyle: textStyle,
+      minLines: minLines,
+      maxWidth: maxWidth,
+    );
   }
 }
 
@@ -13,6 +19,7 @@ extension TextBalancerTextExt on Text {
   Text balance(
     BuildContext context, {
     double? maxWidth,
+    int? minLines,
   }) {
     assert(data != null);
     final textStyle = style ?? DefaultTextStyle.of(context).style;
@@ -21,6 +28,7 @@ extension TextBalancerTextExt on Text {
       data!,
       textStyle: textStyle,
       maxWidth: width,
+      minLines: minLines,
     );
     return Text(
       balancedData,
